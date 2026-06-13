@@ -15,6 +15,7 @@ import Panchangam from './pages/Panchangam';
 import Profile from './pages/Profile';
 import LoginPage from './pages/LoginPage';
 import AdminPanel from './pages/AdminPanel';
+import Gallery from './pages/Gallery';
 import { hasSeenOnboarding, getSettings } from './store/useAppStore';
 import { getAuth, isAdmin, logout } from './store/authStore';
 
@@ -98,6 +99,7 @@ function AppRoutes({ onLogout }) {
           <Route path="/bookmarks" element={<Bookmarks />} />
           <Route path="/panchangam" element={<Panchangam />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/gallery" element={<Gallery />} />
         </Routes>
       </PageWrapper>
     </Layout>

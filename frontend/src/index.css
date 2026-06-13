@@ -82,6 +82,10 @@ body {
 ::-webkit-scrollbar-thumb { background: #C88F2D88; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #C88F2D; }
 
+/* Hide scrollbar but keep scroll */
+.scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
 /* Dark mode */
 .dark body { background-color: hsl(35 20% 8%); color: hsl(40 43% 90%); }
 .dark { --color-parchment: hsl(35 15% 10%); --color-parchment-dark: hsl(35 15% 14%); }

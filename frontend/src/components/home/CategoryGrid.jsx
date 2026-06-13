@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Music, Zap, Hash, List, BookMarked, FlameKindling, CalendarDays, Library } from "lucide-react";
+import { Music, Zap, Hash, List, BookMarked, FlameKindling, CalendarDays, Library, Images } from "lucide-react";
 
 import imgStotras from "../../assets/catagoryImages/stotras.png";
 import imgMantras from "../../assets/catagoryImages/mantralu.png";
@@ -19,6 +19,7 @@ export const CATEGORIES = [
   { key: "pooja_vidhanam", label: "Pooja",          icon: FlameKindling,  color: "#713f12",  img: imgPooja        },
   { key: "panchangam",     label: "Panchangam",     icon: CalendarDays,   color: "#0c4a6e",  img: imgPanchangam,  link: "/panchangam" },
   { key: "book",           label: "Books",          icon: Library,        color: "#1c1917",  img: imgBooks        },
+  { key: "gallery",        label: "Gallery",        icon: Images,         color: "#065f46",  img: imgAgama,       link: "/gallery" },
 ];
 
 function CategoryGrid() {
@@ -31,7 +32,7 @@ function CategoryGrid() {
         Categories
       </h2>
 
-      <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-2 sm:gap-3">
+      <div className="flex sm:grid sm:grid-cols-5 md:grid-cols-9 gap-2 sm:gap-3 overflow-x-auto pb-1 sm:overflow-x-visible sm:pb-0 scrollbar-hide">
         {CATEGORIES.map((cat, i) => {
           const Icon = cat.icon;
           const href = cat.link || "/search?cat=" + cat.key;
@@ -45,8 +46,8 @@ function CategoryGrid() {
               transition={{ delay: i * 0.05 }}
               whileHover={{ scale: 1.07, y: -3 }}
               whileTap={{ scale: 0.93 }}
-              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer select-none"
-              style={{ aspectRatio: "1 / 1.2" }}
+              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer select-none flex-shrink-0 sm:flex-shrink"
+              style={{ aspectRatio: "1 / 1.2", width: "72px", minWidth: "72px" }}
             >
               {/* bg photo */}
               <img

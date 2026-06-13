@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, BookOpen, Tag, Plus, Pencil, Trash2, X,
-  Save, ChevronRight, LogOut, Search, BookMarked, Layers, ImagePlus, Image, FileUp
+  Save, ChevronRight, LogOut, Search, BookMarked, Layers, ImagePlus, Image, FileUp, GalleryHorizontal
 } from 'lucide-react';
 import { getScriptures, saveScripture, deleteScripture, getCategories, saveCategory, deleteCategory } from '../store/scriptureStore';
 import { logout } from '../store/authStore';
 import logo from '../assets/images/logo.png';
 import PDFImportModal from '../components/PDFImportModal';
+import ImagesTab from './ImagesTab';
 
 const GOLD = 'linear-gradient(135deg, #C88F2D 0%, #E4B24B 45%, #F6D67A 100%)';
 const GOLD_DARK = '#8B6200';
@@ -27,9 +28,10 @@ const COLOR_OPTIONS = [
 ];
 
 const TABS = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'scriptures', label: 'Scriptures', icon: BookOpen },
-  { id: 'categories', label: 'Categories', icon: Tag },
+  { id: 'dashboard',  label: 'Dashboard',  icon: LayoutDashboard },
+  { id: 'scriptures', label: 'Scriptures',  icon: BookOpen },
+  { id: 'categories', label: 'Categories',  icon: Tag },
+  { id: 'images',     label: 'Images',      icon: GalleryHorizontal },
 ];
 
 /* ─── small reusable ─── */
@@ -724,6 +726,7 @@ export default function AdminPanel({ onLogout }) {
                   scriptures={scriptures}
                 />
               )}
+              {tab === 'images' && <ImagesTab />}
             </motion.div>
           </AnimatePresence>
         </main>

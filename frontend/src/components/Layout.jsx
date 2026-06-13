@@ -6,11 +6,11 @@ import SettingsDrawer from './SettingsDrawer';
 import logo from '../assets/images/logo.png';
 
 const NAV_LINKS = [
-  { to: '/', icon: Home, label: 'హోం' },
-  { to: '/search', icon: Search, label: 'శోధన' },
-  { to: '/bookmarks', icon: Bookmark, label: 'బుక్మార్క్స్' },
+  { to: '/',           icon: Home,     label: 'హోం' },
+  { to: '/search',     icon: Search,   label: 'శోధన' },
+  { to: '/bookmarks',  icon: Bookmark, label: 'బుక్మార్క్స్' },
   { to: '/panchangam', icon: Calendar, label: 'పంచాంగం' },
-  { to: '/profile', icon: User, label: 'ప్రొఫైల్' },
+  { to: '/profile',    icon: User,     label: 'ప్రొఫైల్' },
 ];
 
 const GOLD = 'linear-gradient(135deg, #C88F2D 0%, #E4B24B 45%, #F6D67A 100%)';
