@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #C88F2D;
+  --color-primary-light: #E4B24B;
+  --color-primary-pale: #F6D67A;
+  --color-primary-dark: #8B6200;
+  --color-parchment: hsl(40 43% 95%);
+  --color-parchment-dark: hsl(40 30% 88%);
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Playfair Display', serif;
+  --font-telugu: 'Tiro Telugu', serif;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: hsl(40 43% 95%);
+  color: hsl(35 40% 15%);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
+  background-image: url('/bg-pattern.svg');
+  background-repeat: repeat;
+  background-size: 220px 220px;
+}
+
+.font-telugu { font-family: 'Tiro Telugu', serif; }
+
+/* Lotus watermark */
+.lotus-bg { position: relative; }
+.lotus-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23C9A84C' stroke-opacity='0.12' stroke-width='1.5'%3E%3Cellipse cx='60' cy='75' rx='8' ry='20'/%3E%3Cellipse cx='60' cy='75' rx='8' ry='20' transform='rotate(40 60 75)'/%3E%3Cellipse cx='60' cy='75' rx='8' ry='20' transform='rotate(80 60 75)'/%3E%3Cellipse cx='60' cy='75' rx='8' ry='20' transform='rotate(120 60 75)'/%3E%3Cellipse cx='60' cy='75' rx='8' ry='20' transform='rotate(160 60 75)'/%3E%3Cellipse cx='60' cy='75' rx='8' ry='20' transform='rotate(200 60 75)'/%3E%3Cellipse cx='60' cy='75' rx='8' ry='20' transform='rotate(240 60 75)'/%3E%3Cellipse cx='60' cy='75' rx='8' ry='20' transform='rotate(280 60 75)'/%3E%3Ccircle cx='60' cy='60' r='6'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 120px 120px;
+  pointer-events: none;
+  z-index: 0;
+}
+.lotus-bg > * { position: relative; z-index: 1; }
+
+/* Gold shimmer text */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #C88F2D 0%, #F6D67A 40%, #E4B24B 60%, #C88F2D 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Temple gradient — golden */
+.temple-gradient {
+  background: linear-gradient(135deg, #C88F2D 0%, #E4B24B 45%, #F6D67A 100%);
+}
+
+/* Reader card border */
+.reader-border {
+  border: 2px solid #E4B24B55;
+  box-shadow: 0 0 0 1px #E4B24B22, inset 0 0 30px #F6D67A08;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: hsl(40 43% 90%); }
+::-webkit-scrollbar-thumb { background: #C88F2D88; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #C88F2D; }
+
+/* Dark mode */
+.dark body { background-color: hsl(35 20% 8%); color: hsl(40 43% 90%); }
+.dark { --color-parchment: hsl(35 15% 10%); --color-parchment-dark: hsl(35 15% 14%); }

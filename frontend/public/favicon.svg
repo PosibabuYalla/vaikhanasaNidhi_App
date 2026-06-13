@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- background circle -->
+  <circle cx="32" cy="32" r="32" fill="hsl(0,57%,22%)"/>
+  <!-- gold ring -->
+  <circle cx="32" cy="32" r="28" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.5"/>
+  <!-- flame outer -->
+  <path d="M32 8 C32 8 18 26 18 40 C18 50 24 57 32 57 C40 57 46 50 46 40 C46 26 32 8 32 8Z" fill="#ffd700" opacity="0.95"/>
+  <!-- flame inner highlight -->
+  <path d="M32 16 C32 16 22 30 22 40 C22 47 26 52 32 52 C38 52 42 47 42 40 C42 30 32 16 32 16Z" fill="#ffec6e" opacity="0.6"/>
+  <!-- flame core -->
+  <path d="M32 22 L25 42 C25 46 28 50 32 50 C36 50 39 46 39 42 Z" fill="#c9a84c" opacity="0.75"/>
+  <!-- small dot at tip -->
+  <circle cx="32" cy="11" r="2" fill="#fff" opacity="0.7"/>
+</svg>
