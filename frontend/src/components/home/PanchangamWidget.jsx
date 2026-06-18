@@ -2,46 +2,51 @@ import { Link } from "react-router-dom";
 import { Sun, Moon, Clock, Star, ChevronRight } from "lucide-react";
 import { getPanchangamForDate } from "../../lib/panchangam";
 
-const GOLD = "linear-gradient(135deg, #C88F2D 0%, #E4B24B 45%, #F6D67A 100%)";
-const GOLD_DARK = "#8B6200";
+const GOLD = "#E4B24B";
 
 export default function PanchangamWidget() {
   const data = getPanchangamForDate(new Date());
 
   return (
-    <div className="mx-4 sm:mx-6 mt-6 bg-white rounded-2xl shadow-sm overflow-hidden" style={{ border: '1px solid #E4B24B33' }}>
-      <div className="px-4 py-3 flex items-center justify-between" style={{ background: GOLD }}>
+    <div className="mx-4 sm:mx-6 mt-6 corner-card overflow-hidden">
+      <div className="px-4 py-3 flex items-center justify-between" style={{ borderBottom: '1px solid #C88F2D22' }}>
         <div>
-          <h3 className="font-telugu font-bold text-sm" style={{ color: GOLD_DARK, fontFamily: "Tiro Telugu, serif" }}>
+          <h3 className="font-telugu font-bold text-sm gold-glow" style={{ fontFamily: "Tiro Telugu, serif" }}>
             Today Panchangam
           </h3>
-          <p className="text-xs" style={{ color: GOLD_DARK + '99' }}>{data.dateLabel} - {data.day}</p>
+          <p className="text-xs" style={{ color: '#C88F2D66' }}>{data.dateLabel} - {data.day}</p>
         </div>
-        <Link to="/panchangam" className="flex items-center gap-1 text-xs font-semibold" style={{ color: GOLD_DARK }}>
+        <Link to="/panchangam" className="flex items-center gap-1 text-xs font-semibold" style={{ color: GOLD }}>
           More <ChevronRight size={12} />
         </Link>
       </div>
-      <div className="grid grid-cols-2 gap-0 divide-x divide-y divide-gray-100">
-        <Cell icon={<Moon size={14} className="text-indigo-500" />} label="Tithi" value={data.tithi} />
-        <Cell icon={<Star size={14} style={{ color: '#C88F2D' }} />} label="Nakshatra" value={data.nakshatra} />
-        <Cell icon={<Clock size={14} className="text-red-400" />} label="Rahukalam" value={data.rahukalam} />
-        <Cell icon={<Sun size={14} className="text-orange-400" />} label="Sunrise" value={data.sunrise} />
+      <div className="grid grid-cols-2 gap-0" style={{ borderColor: '#C88F2D15' }}>
+        <Cell icon={<Moon size={14} style={{ color: '#a78bfa' }} />} label="Tithi" value={data.tithi} />
+        <Cell icon={<Star size={14} style={{ color: GOLD }} />} label="Nakshatra" value={data.nakshatra} borderLeft />
+        <Cell icon={<Clock size={14} style={{ color: '#f87171' }} />} label="Rahukalam" value={data.rahukalam} borderTop />
+        <Cell icon={<Sun size={14} style={{ color: '#fb923c' }} />} label="Sunrise" value={data.sunrise} borderTop borderLeft />
       </div>
-      <div className="px-4 py-2.5 border-t border-gray-100" style={{ background: "hsl(40 43% 97%)" }}>
+      <div className="px-4 py-2.5" style={{ borderTop: '1px solid #C88F2D22', background: '#111' }}>
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
-          <p className="text-xs text-green-700 font-medium">{data.auspicious}</p>
+          <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#4ade80', boxShadow: '0 0 6px rgba(74,222,128,0.5)' }} />
+          <p className="text-xs font-medium" style={{ color: '#86efac' }}>{data.auspicious}</p>
         </div>
       </div>
     </div>
   );
 }
 
-function Cell({ icon, label, value }) {
+function Cell({ icon, label, value, borderTop, borderLeft }) {
   return (
-    <div className="px-4 py-3 flex flex-col gap-0.5">
-      <div className="flex items-center gap-1.5">{icon}<span className="text-gray-400 text-xs">{label}</span></div>
-      <span className="font-telugu text-sm font-semibold" style={{ color: '#8B6200', fontFamily: "Tiro Telugu, serif" }}>
+    <div
+      className="px-4 py-3 flex flex-col gap-0.5"
+      style={{
+        borderTop: borderTop ? '1px solid #C88F2D15' : undefined,
+        borderLeft: borderLeft ? '1px solid #C88F2D15' : undefined,
+      }}
+    >
+      <div className="flex items-center gap-1.5">{icon}<span className="text-xs" style={{ color: '#C88F2D55' }}>{label}</span></div>
+      <span className="font-telugu text-sm font-semibold" style={{ color: GOLD, fontFamily: "Tiro Telugu, serif" }}>
         {value}
       </span>
     </div>

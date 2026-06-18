@@ -1,4 +1,25 @@
-/* App-level styles - most styles in index.css */
+/* Horizontal scroll with visible gold scrollbar */
+.scrollbar-gold {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #C88F2D88 var(--scrollbar-track);
+}
+.scrollbar-gold::-webkit-scrollbar {
+  height: 6px;
+}
+.scrollbar-gold::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 3px;
+  margin: 0 4px;
+}
+.scrollbar-gold::-webkit-scrollbar-thumb {
+  background: #C88F2D88;
+  border-radius: 3px;
+}
+.scrollbar-gold::-webkit-scrollbar-thumb:hover {
+  background: #C88F2D;
+}
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;

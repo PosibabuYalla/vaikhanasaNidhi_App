@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "../assets/images/logo.png";
 
 export default function Splash({ onDone }) {
   const [phase, setPhase] = useState("in");   // "in" | "hold" | "out"
@@ -95,7 +94,7 @@ export default function Splash({ onDone }) {
                 style={{ background: "radial-gradient(circle, #c9a84c55 0%, transparent 70%)", transform: "scale(1.4)" }}
               />
               <img
-                src={logo}
+                src="/vaikhanasa.png"
                 alt="Vaikhanasa Nidhi"
                 className="relative z-10 drop-shadow-2xl"
                 style={{ width: 180, height: 180, objectFit: "contain" }}
@@ -110,10 +109,9 @@ export default function Splash({ onDone }) {
               transition={{ delay: 0.9, duration: 0.7 }}
             >
               <p
-                className="gold-gradient-text font-bold tracking-widest text-2xl"
-                style={{ fontFamily: "Playfair Display, serif" }}
+                className="gold-gradient-text font-telugu text-xl font-medium tracking-normal leading-tight"
               >
-                Vaikhanasa Nidhi
+                వైఖానస మహాగురవే నమః
               </p>
               <p className="text-white/40 text-xs tracking-[0.3em] mt-1 uppercase">Sacred Scripture Library</p>
             </motion.div>
@@ -138,14 +136,14 @@ export default function Splash({ onDone }) {
           </motion.div>
 
           {/* ── om symbol watermark ── */}
-          <motion.div
+          {/* <motion.div
             className="absolute text-white/4 pointer-events-none select-none"
             style={{ fontSize: 320, fontFamily: "serif", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
             animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.02, 1] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           >
             ॐ
-          </motion.div>
+          </motion.div> */}
 
         </motion.div>
       )}

@@ -3,14 +3,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Bookmark, Share2, ZoomIn, ZoomOut, Copy, Check, BookOpen } from "lucide-react";
 import { SCRIPTURES, getCategoryInfo } from "../data/scriptures";
-import { isBookmarked, addBookmark, removeBookmark, saveReadingProgress } from "../store/useAppStore";
+import { isBookmarked, addBookmark, removeBookmark, saveReadingProgress, getSettings } from "../store/useAppStore";
+import { getReaderBaseFontSize } from "../lib/theme";
 import { toast } from "sonner";
 
 export default function Reader() {
   const { id } = useParams();
   const navigate = useNavigate();
   const scripture = SCRIPTURES.find(s => s.id === id);
-  const [fontSize, setFontSize] = useState(20);
+  const [fontSize, setFontSize] = useState(() => getReaderBaseFontSize(getSettings().fontSize));
   const [bookmarked, setBookmarked] = useState(() => isBookmarked(id));
   const [copiedIdx, setCopiedIdx] = useState(null);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -19,6 +20,14 @@ export default function Reader() {
   const related = scripture
     ? SCRIPTURES.filter(s => s.category === scripture.category && s.id !== scripture.id).slice(0, 3)
     : [];
+
+  useEffect(() => {
+    function onThemeChange(e) {
+      setFontSize(getReaderBaseFontSize(e.detail?.fontSize || getSettings().fontSize));
+    }
+    window.addEventListener('themechange', onThemeChange);
+    return () => window.removeEventListener('themechange', onThemeChange);
+  }, []);
 
   useEffect(() => {
     if (!scripture) return;
@@ -55,14 +64,12 @@ export default function Reader() {
 
   if (!scripture) {
     return (
-      <div className="flex items-center justify-center min-h-screen px-4">
-        <div className="text-center">
-          <p className="font-telugu text-xl text-gray-500 mb-4" style={{ fontFamily: "Tiro Telugu, serif" }}>
+      <div className="flex items-center justify-center min-h-screen px-4 page-bg">
+        <div className="text-center corner-card rounded-2xl p-8">
+          <p className="font-telugu text-xl text-muted mb-4" style={{ fontFamily: "Tiro Telugu, serif" }}>
             Scripture not found
           </p>
-          <button onClick={() => navigate(-1)}
-            className="px-5 py-2.5 rounded-xl text-white text-sm"
-            style={{ background: "hsl(0 57% 27%)" }}>
+          <button onClick={() => navigate(-1)} className="px-5 py-2.5 rounded-xl text-sm btn-gold">
             Go Back
           </button>
         </div>
@@ -73,92 +80,91 @@ export default function Reader() {
   const cat = getCategoryInfo(scripture.category);
 
   return (
-    <div ref={containerRef} className="min-h-screen pb-12">
+    <div ref={containerRef} className="min-h-screen pb-12 page-bg">
 
-      {/* scroll progress */}
-      <div className="fixed top-0 left-0 right-0 h-1 z-50 bg-gray-200 lg:left-64">
-        <motion.div className="h-full" style={{ background: "hsl(41 56% 51%)" }}
+      <div className="fixed top-0 left-0 right-0 h-0.5 z-50" style={{ background: '#222' }}>
+        <motion.div className="h-full" style={{ background: 'linear-gradient(90deg, #C88F2D, #E4B24B)' }}
           animate={{ width: scrollProgress + "%" }} transition={{ duration: 0.15 }} />
       </div>
 
-      {/* sticky toolbar */}
-      <div className="sticky top-1 z-40 mx-3 sm:mx-6 mt-3">
-        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-lg px-3 py-2.5 flex items-center gap-2">
+      <div className="sticky top-0 z-40 mx-3 sm:mx-6 mt-3 lg:top-16">
+        <div className="corner-card rounded-2xl px-3 py-2.5 flex items-center gap-2 backdrop-blur-md"
+          style={{ background: 'var(--bg-nav)' }}>
           <button onClick={() => navigate(-1)}
-            className="p-2 rounded-xl hover:bg-gray-100 text-gray-600 flex-shrink-0">
+            className="p-2 rounded-xl hover:bg-white/5 text-muted hover:text-white flex-shrink-0 transition-colors">
             <ArrowLeft size={18} />
           </button>
-          <span className="flex-1 font-telugu text-sm sm:text-base font-semibold truncate"
-            style={{ color: "#7a1a1a", fontFamily: "Tiro Telugu, serif" }}>
+          <span className="flex-1 font-telugu text-sm sm:text-base font-semibold truncate gold-glow"
+            style={{ fontFamily: "Tiro Telugu, serif" }}>
             {scripture.title_telugu}
           </span>
           <div className="flex items-center gap-0.5 flex-shrink-0">
             <button onClick={() => setFontSize(s => Math.max(14, s - 2))}
-              className="p-2 rounded-xl hover:bg-gray-100 text-gray-500">
+              className="p-2 rounded-xl hover:bg-white/5 text-muted">
               <ZoomOut size={15} />
             </button>
-            <span className="text-xs text-gray-400 w-6 text-center hidden sm:inline">{fontSize}</span>
-            <button onClick={() => setFontSize(s => Math.min(32, s + 2))}
-              className="p-2 rounded-xl hover:bg-gray-100 text-gray-500">
+            <span className="text-xs text-secondary w-8 text-center hidden sm:inline">{fontSize}</span>
+            <button onClick={() => setFontSize(s => Math.min(40, s + 2))}
+              className="p-2 rounded-xl hover:bg-white/5 text-muted">
               <ZoomIn size={15} />
             </button>
             <button onClick={toggleBookmark}
-              className="p-2 rounded-xl hover:bg-gray-100 transition-colors"
-              style={{ color: bookmarked ? "hsl(41 56% 40%)" : "#6b7280" }}>
+              className="p-2 rounded-xl hover:bg-white/5 transition-colors"
+              style={{ color: bookmarked ? 'var(--text-primary)' : 'var(--text-muted)' }}>
               <Bookmark size={16} fill={bookmarked ? "currentColor" : "none"} />
             </button>
             <button onClick={handleShare}
-              className="p-2 rounded-xl hover:bg-gray-100 text-gray-500">
+              className="p-2 rounded-xl hover:bg-white/5 text-muted">
               <Share2 size={16} />
             </button>
           </div>
         </div>
       </div>
 
-      {/* two-col on xl */}
       <div className="xl:flex xl:gap-6 xl:px-6 xl:mt-4">
-
-        {/* main content */}
         <div className="xl:flex-1 min-w-0">
 
-          {/* header card */}
-          <div className={"mx-3 sm:mx-6 xl:mx-0 mt-3 sm:mt-4 bg-gradient-to-br " + cat.color + " rounded-3xl overflow-hidden shadow-xl"}>
-            <div className="p-5 sm:p-7 lotus-bg">
+          <div className="mx-3 sm:mx-6 xl:mx-0 mt-3 sm:mt-4 corner-card rounded-3xl overflow-hidden">
+            <div className="p-5 sm:p-7 page-header">
               <div className="flex flex-wrap gap-2 mb-3">
-                <span className="px-3 py-1 rounded-full bg-white/20 text-white/90 text-xs font-telugu"
-                  style={{ fontFamily: "Tiro Telugu, serif" }}>{cat.label}</span>
-                <span className="px-3 py-1 rounded-full bg-white/15 text-white/80 text-xs">
-                  {scripture.deity}
+                <span className="px-3 py-1 rounded-full text-xs font-telugu text-primary-gold"
+                  style={{ fontFamily: "Tiro Telugu, serif", background: '#C88F2D22', border: '1px solid #C88F2D33' }}>
+                  {cat.label}
                 </span>
+                {scripture.deity && (
+                  <span className="px-3 py-1 rounded-full text-xs text-secondary"
+                    className="rounded-xl p-3 bg-elevated"
+                    style={{ border: '1px solid var(--border-subtle)' }}>
+                    {scripture.deity}
+                  </span>
+                )}
               </div>
-              <h1 className="font-telugu text-white font-bold leading-snug mb-2"
+              <h1 className="font-telugu font-bold leading-snug mb-2 gold-glow-strong"
                 style={{ fontFamily: "Tiro Telugu, serif", fontSize: Math.max(fontSize + 4, 24) }}>
                 {scripture.title_telugu}
               </h1>
-              <p className="text-white/55 text-sm mb-3 italic">{scripture.title_english}</p>
+              <p className="text-secondary text-sm mb-3 italic">{scripture.title_english}</p>
               <div className="flex items-center gap-3 mt-3">
-                <div className="flex-1 h-1 bg-white/20 rounded-full overflow-hidden">
-                  <div className="h-full bg-yellow-400/80 rounded-full transition-all"
-                    style={{ width: scrollProgress + "%" }} />
+                <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: '#222' }}>
+                  <div className="h-full rounded-full transition-all"
+                    style={{ background: 'linear-gradient(90deg, #C88F2D, #E4B24B)', width: scrollProgress + "%" }} />
                 </div>
-                <span className="text-white/60 text-xs flex-shrink-0">
+                <span className="text-muted text-xs flex-shrink-0">
                   {scripture.verses.length} verses
                 </span>
               </div>
             </div>
           </div>
 
-          {/* description */}
           {scripture.description && (
-            <div className="mx-3 sm:mx-6 xl:mx-0 mt-4 bg-white rounded-2xl p-4 sm:p-5 reader-border">
-              <p className="font-telugu text-gray-600 text-sm sm:text-base leading-relaxed"
-                style={{ fontFamily: "Tiro Telugu, serif", lineHeight: 1.8 }}>
+            <div className="mx-3 sm:mx-6 xl:mx-0 mt-4 corner-card rounded-2xl p-4 sm:p-5 reader-border">
+              <p className="font-telugu reading-text text-sm sm:text-base"
+                style={{ fontFamily: "Tiro Telugu, serif" }}>
                 {scripture.description}
               </p>
             </div>
           )}
 
-          {/* verses */}
           <div className="mx-3 sm:mx-6 xl:mx-0 mt-4 space-y-4">
             {scripture.verses.map((verse, idx) => (
               <motion.div key={idx}
@@ -166,49 +172,46 @@ export default function Reader() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ delay: Math.min(idx * 0.06, 0.3) }}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm reader-border group"
+                className="corner-card rounded-2xl overflow-hidden reader-border group"
               >
-                {/* verse header */}
-                <div className="flex items-center justify-between px-4 sm:px-5 py-2.5 border-b border-gray-50">
+                <div className="flex items-center justify-between px-4 sm:px-5 py-2.5"
+                  style={{ borderBottom: '1px solid #C88F2D15' }}>
                   <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-white font-bold"
-                      style={{ background: "hsl(0 57% 27%)", fontSize: 10 }}>
+                    <div className="w-5 h-5 rounded-full flex items-center justify-center font-bold"
+                      style={{ background: 'linear-gradient(135deg, #C88F2D, #E4B24B)', color: '#0a0a0a', fontSize: 10 }}>
                       {idx + 1}
                     </div>
-                    <span className="text-xs text-gray-400">Verse</span>
+                    <span className="text-xs text-muted">Verse</span>
                   </div>
                   <button onClick={() => copyVerse(verse, idx)}
-                    className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 text-xs">
+                    className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-white/5 text-muted text-xs">
                     {copiedIdx === idx
-                      ? <Check size={13} className="text-green-500" />
+                      ? <Check size={13} className="text-green-400" />
                       : <Copy size={13} />}
                   </button>
                 </div>
 
-                {/* verse body: single col mobile, 2-col on md+ */}
-                <div className="p-4 sm:p-5 md:grid md:grid-cols-2 md:gap-6 md:divide-x md:divide-gray-100">
-                  <div className="md:pr-6">
-                    <p className="font-telugu leading-loose whitespace-pre-line text-gray-900"
-                      style={{ fontFamily: "Tiro Telugu, serif", fontSize, lineHeight: 1.9 }}>
+                <div className="p-4 sm:p-5 md:grid md:grid-cols-2 md:gap-6"
+                  style={{ borderColor: '#C88F2D15' }}>
+                  <div className="md:pr-6" style={{ borderRight: 'none' }}>
+                    <p className="font-telugu whitespace-pre-line reading-mantra"
+                      style={{ fontFamily: "Tiro Telugu, serif", fontSize }}>
                       {verse.telugu}
                     </p>
                   </div>
 
-                  {/* mobile divider */}
                   <div className="md:hidden flex items-center gap-3 my-4">
-                    <div className="flex-1 h-px"
-                      style={{ background: "linear-gradient(90deg,transparent,hsl(41 56% 51%/0.35),transparent)" }} />
-                    <span className="text-xs" style={{ color: "hsl(41 56% 51%)" }}>Meaning</span>
-                    <div className="flex-1 h-px"
-                      style={{ background: "linear-gradient(90deg,transparent,hsl(41 56% 51%/0.35),transparent)" }} />
+                    <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, #C88F2D44, transparent)' }} />
+                    <span className="text-xs text-secondary font-semibold uppercase tracking-wider">Meaning</span>
+                    <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, #C88F2D44, transparent)' }} />
                   </div>
 
-                  <div className="md:pl-6">
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 hidden md:block">
+                  <div className="md:pl-6 md:border-l" style={{ borderColor: '#C88F2D15' }}>
+                    <p className="text-xs font-semibold uppercase tracking-wider mb-2 text-secondary hidden md:block">
                       Meaning
                     </p>
-                    <p className="font-telugu text-gray-600 leading-relaxed text-sm sm:text-base"
-                      style={{ fontFamily: "Tiro Telugu, serif", lineHeight: 1.8 }}>
+                    <p className="font-telugu reading-meaning text-sm sm:text-base"
+                      style={{ fontFamily: "Tiro Telugu, serif", fontSize: Math.max(fontSize - 4, 14) }}>
                       {verse.meaning}
                     </p>
                   </div>
@@ -217,43 +220,40 @@ export default function Reader() {
             ))}
           </div>
 
-          {/* footer */}
           <div className="mx-3 sm:mx-6 xl:mx-0 mt-8 text-center pb-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="flex-1 h-px bg-gray-200" />
-              <span className="text-gray-400 text-sm">Completed</span>
-              <div className="flex-1 h-px bg-gray-200" />
+              <div className="flex-1 h-px" style={{ background: '#C88F2D22' }} />
+              <span className="text-muted text-sm">Completed</span>
+              <div className="flex-1 h-px" style={{ background: '#C88F2D22' }} />
             </div>
-            <p className="font-telugu text-gray-400 text-xs"
-              style={{ fontFamily: "Tiro Telugu, serif" }}>
+            <p className="font-telugu text-muted text-xs" style={{ fontFamily: "Tiro Telugu, serif" }}>
               {scripture.title_telugu}
             </p>
           </div>
         </div>
 
-        {/* related sidebar xl+ */}
         {related.length > 0 && (
           <div className="hidden xl:block w-72 flex-shrink-0">
-            <div className="sticky top-20 space-y-3">
-              <h3 className="font-telugu font-bold text-sm"
-                style={{ color: "#7a1a1a", fontFamily: "Tiro Telugu, serif" }}>
+            <div className="sticky top-24 space-y-3">
+              <h3 className="font-telugu font-bold text-sm gold-glow"
+                style={{ fontFamily: "Tiro Telugu, serif" }}>
                 Related Scriptures
               </h3>
               {related.map(s => {
                 const rc = getCategoryInfo(s.category);
                 return (
                   <a key={s.id} href={"/read/" + s.id}
-                    className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex">
-                    <div className={"w-2 bg-gradient-to-b flex-shrink-0 " + rc.color} />
+                    className="corner-card rounded-2xl overflow-hidden hover:brightness-110 transition-all flex">
+                    <div className="w-1 flex-shrink-0" style={{ background: 'linear-gradient(180deg, #C88F2D, #E4B24B)' }} />
                     <div className="p-3 flex-1 min-w-0">
-                      <span className="text-xs text-gray-400">{rc.label}</span>
-                      <p className="font-telugu font-semibold text-sm leading-snug mt-0.5"
-                        style={{ color: "#7a1a1a", fontFamily: "Tiro Telugu, serif" }}>
+                      <span className="text-xs text-muted">{rc.label}</span>
+                      <p className="font-telugu font-semibold text-sm leading-snug mt-0.5 gold-glow"
+                        style={{ fontFamily: "Tiro Telugu, serif" }}>
                         {s.title_telugu}
                       </p>
                     </div>
                     <div className="flex items-center pr-3">
-                      <BookOpen size={14} className="text-gray-300" />
+                      <BookOpen size={14} className="text-muted" />
                     </div>
                   </a>
                 );

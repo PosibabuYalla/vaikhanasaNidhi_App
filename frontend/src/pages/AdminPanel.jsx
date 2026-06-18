@@ -13,6 +13,7 @@ import ImagesTab from './ImagesTab';
 const GOLD = 'linear-gradient(135deg, #C88F2D 0%, #E4B24B 45%, #F6D67A 100%)';
 const GOLD_DARK = '#8B6200';
 const GOLD_SOLID = '#C88F2D';
+const GOLD_TEXT = '#E4B24B';
 
 const COLOR_OPTIONS = [
   { value: 'from-rose-700 to-red-900', label: 'Rose' },
@@ -45,13 +46,14 @@ function Badge({ label, color }) {
 
 function Confirm({ message, onYes, onNo }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
       <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-        className="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl text-center">
-        <p className="text-sm font-semibold text-gray-700 mb-5">{message}</p>
+        className="corner-card rounded-2xl p-6 w-full max-w-xs shadow-2xl text-center"
+        style={{ background: '#141414' }}>
+        <p className="text-sm font-semibold text-muted mb-5">{message}</p>
         <div className="flex gap-3">
-          <button onClick={onNo} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-gray-500 bg-gray-100 hover:bg-gray-200">Cancel</button>
-          <button onClick={onYes} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white bg-red-500 hover:bg-red-600">Delete</button>
+          <button onClick={onNo} className="flex-1 py-2.5 rounded-xl text-sm font-semibold btn-ghost">Cancel</button>
+          <button onClick={onYes} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white bg-red-600 hover:bg-red-500">Delete</button>
         </div>
       </motion.div>
     </div>
@@ -93,17 +95,17 @@ function ScriptureModal({ scripture, categories, onSave, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 overflow-y-auto p-4">
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 overflow-y-auto p-4">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl my-4">
+        className="corner-card rounded-2xl w-full max-w-2xl shadow-2xl my-4"
+        style={{ background: '#141414' }}>
 
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100"
-          style={{ background: GOLD }}>
-          <h2 className="font-bold text-base" style={{ color: GOLD_DARK }}>
+        <div className="flex items-center justify-between px-6 py-4"
+          style={{ borderBottom: '1px solid #C88F2D22', background: 'linear-gradient(135deg, #1a1407, #141414)' }}>
+          <h2 className="font-bold text-base gold-glow">
             {isEdit ? 'Edit Scripture' : 'Add New Scripture'}
           </h2>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-white/20" style={{ color: GOLD_DARK }}>
+          <button onClick={onClose} className="p-1 rounded-lg hover:bg-white/5" style={{ color: GOLD_TEXT }}>
             <X size={18} />
           </button>
         </div>
@@ -111,73 +113,65 @@ function ScriptureModal({ scripture, categories, onSave, onClose }) {
         <form onSubmit={handleSave} className="p-6 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Title (Telugu) *</label>
+              <label className="form-label">Title (Telugu) *</label>
               <input value={form.title_telugu} onChange={e => set('title_telugu', e.target.value)}
-                placeholder="స్తోత్రం పేరు" required
-                className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border border-gray-200 focus:border-amber-400"
+                placeholder="స్తోత్రం పేరు" required className="form-input"
                 style={{ fontFamily: 'Tiro Telugu, serif' }} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Title (English)</label>
+              <label className="form-label">Title (English)</label>
               <input value={form.title_english} onChange={e => set('title_english', e.target.value)}
-                placeholder="Stotra Name"
-                className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border border-gray-200 focus:border-amber-400" />
+                placeholder="Stotra Name" className="form-input" />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Category</label>
-              <select value={form.category} onChange={e => set('category', e.target.value)}
-                className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border border-gray-200 focus:border-amber-400 bg-white">
+              <label className="form-label">Category</label>
+              <select value={form.category} onChange={e => set('category', e.target.value)} className="form-select">
                 {categories.map(c => <option key={c.id} value={c.id}>{c.label_en || c.label} ({c.label})</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Deity (Telugu)</label>
+              <label className="form-label">Deity (Telugu)</label>
               <input value={form.deity} onChange={e => set('deity', e.target.value)}
-                placeholder="విష్ణువు"
-                className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border border-gray-200 focus:border-amber-400"
+                placeholder="విష్ణువు" className="form-input"
                 style={{ fontFamily: 'Tiro Telugu, serif' }} />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Description</label>
+            <label className="form-label">Description</label>
             <textarea value={form.description} onChange={e => set('description', e.target.value)}
-              rows={2} placeholder="వివరణ..."
-              className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border border-gray-200 focus:border-amber-400 resize-none"
+              rows={2} placeholder="వివరణ..." className="form-textarea resize-none"
               style={{ fontFamily: 'Tiro Telugu, serif' }} />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Popularity (0–100)</label>
+              <label className="form-label">Popularity (0–100)</label>
               <input type="number" min={0} max={100} value={form.popularity} onChange={e => set('popularity', +e.target.value)}
-                className="w-32 rounded-xl px-3 py-2.5 text-sm outline-none border border-gray-200 focus:border-amber-400" />
+                className="form-input w-32" />
             </div>
 
-            {/* Deity Photo */}
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Deity Photo <span className="font-normal text-gray-400">(optional)</span></label>
+              <label className="form-label">Deity Photo <span className="font-normal text-muted">(optional)</span></label>
               <div className="flex items-center gap-3">
-                {/* Preview */}
                 <div className="w-16 h-16 rounded-xl flex-shrink-0 overflow-hidden flex items-center justify-center"
-                  style={{ background: 'hsl(40 43% 94%)', border: '1.5px dashed #E4B24B88' }}>
+                  style={{ background: '#1a1a1a', border: '1.5px dashed #C88F2D66' }}>
                   {form.cover_url
                     ? <img src={form.cover_url} alt="deity" className="w-full h-full object-cover" />
                     : <Image size={22} color="#C88F2D" strokeWidth={1.5} />}
                 </div>
                 <div className="flex flex-col gap-1.5 min-w-0">
-                  <label className="flex items-center gap-1.5 cursor-pointer px-3 py-2 rounded-xl text-xs font-semibold transition-colors hover:bg-amber-100"
-                    style={{ background: '#F6D67A55', color: GOLD_DARK }}>
+                  <label className="flex items-center gap-1.5 cursor-pointer px-3 py-2 rounded-xl text-xs font-semibold btn-ghost">
                     <ImagePlus size={13} />
                     {form.cover_url ? 'Change Photo' : 'Upload Photo'}
                     <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                   </label>
                   {form.cover_url && (
                     <button type="button" onClick={() => set('cover_url', null)}
-                      className="flex items-center gap-1 text-xs text-red-400 hover:text-red-600 px-1">
+                      className="flex items-center gap-1 text-xs text-red-400 hover:text-red-300 px-1">
                       <X size={11} /> Remove
                     </button>
                   )}
@@ -186,33 +180,30 @@ function ScriptureModal({ scripture, categories, onSave, onClose }) {
             </div>
           </div>
 
-          {/* Verses */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-semibold text-gray-600">Verses</label>
+              <label className="form-label mb-0">Verses</label>
               <button type="button" onClick={addVerse}
-                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg"
-                style={{ background: '#F6D67A55', color: GOLD_DARK }}>
+                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg btn-ghost">
                 <Plus size={12} /> Add Verse
               </button>
             </div>
             <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
               {form.verses.map((v, i) => (
-                <div key={i} className="rounded-xl p-3 relative" style={{ background: 'hsl(40 43% 97%)', border: '1px solid #E4B24B33' }}>
+                <div key={i} className="rounded-xl p-3 relative"
+                  style={{ background: '#1a1a1a', border: '1px solid #C88F2D22' }}>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold text-gray-400">Verse {i + 1}</span>
+                    <span className="text-xs font-semibold text-muted">Verse {i + 1}</span>
                     {form.verses.length > 1 && (
                       <button type="button" onClick={() => removeVerse(i)}
-                        className="text-red-400 hover:text-red-600"><X size={14} /></button>
+                        className="text-red-400 hover:text-red-300"><X size={14} /></button>
                     )}
                   </div>
                   <textarea value={v.telugu} onChange={e => setVerse(i, 'telugu', e.target.value)}
-                    rows={2} placeholder="తెలుగు పద్యం..."
-                    className="w-full rounded-lg px-3 py-2 text-sm outline-none border border-gray-200 focus:border-amber-400 resize-none mb-2"
+                    rows={2} placeholder="తెలుగు పద్యం..." className="form-textarea resize-none mb-2"
                     style={{ fontFamily: 'Tiro Telugu, serif' }} />
                   <textarea value={v.meaning} onChange={e => setVerse(i, 'meaning', e.target.value)}
-                    rows={2} placeholder="Meaning / అర్థం..."
-                    className="w-full rounded-lg px-3 py-2 text-sm outline-none border border-gray-200 focus:border-amber-400 resize-none"
+                    rows={2} placeholder="Meaning / అర్థం..." className="form-textarea resize-none"
                     style={{ fontFamily: 'Tiro Telugu, serif' }} />
                 </div>
               ))}
@@ -221,12 +212,11 @@ function ScriptureModal({ scripture, categories, onSave, onClose }) {
 
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose}
-              className="flex-1 py-3 rounded-xl text-sm font-semibold text-gray-500 bg-gray-100 hover:bg-gray-200">
+              className="flex-1 py-3 rounded-xl text-sm font-semibold btn-ghost">
               Cancel
             </button>
             <button type="submit"
-              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold"
-              style={{ background: GOLD, color: GOLD_DARK }}>
+              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold btn-gold">
               <Save size={15} /> {isEdit ? 'Save Changes' : 'Add Scripture'}
             </button>
           </div>
@@ -253,36 +243,34 @@ function CategoryModal({ category, onSave, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-        className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ scale: 1, opacity: 1 }}
+        className="corner-card rounded-2xl w-full max-w-md shadow-2xl" style={{ background: '#141414' }}>
 
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100"
-          style={{ background: GOLD }}>
-          <h2 className="font-bold text-base" style={{ color: GOLD_DARK }}>
+        <div className="flex items-center justify-between px-6 py-4"
+          style={{ borderBottom: '1px solid #C88F2D22', background: 'linear-gradient(135deg, #1a1407, #141414)' }}>
+          <h2 className="font-bold text-base gold-glow">
             {isEdit ? 'Edit Category' : 'Add New Category'}
           </h2>
-          <button onClick={onClose} className="p-1 hover:bg-white/20 rounded-lg" style={{ color: GOLD_DARK }}>
+          <button onClick={onClose} className="p-1 hover:bg-white/5 rounded-lg" style={{ color: GOLD_TEXT }}>
             <X size={18} />
           </button>
         </div>
 
         <form onSubmit={handleSave} className="p-6 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Name (Telugu) *</label>
+            <label className="form-label">Name (Telugu) *</label>
             <input value={form.label} onChange={e => set('label', e.target.value)}
-              placeholder="స్తోత్రం" required
-              className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border border-gray-200 focus:border-amber-400"
+              placeholder="స్తోత్రం" required className="form-input"
               style={{ fontFamily: 'Tiro Telugu, serif' }} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Name (English) *</label>
+            <label className="form-label">Name (English) *</label>
             <input value={form.label_en} onChange={e => set('label_en', e.target.value)}
-              placeholder="Stotra" required
-              className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border border-gray-200 focus:border-amber-400" />
+              placeholder="Stotra" required className="form-input" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-2">Color Theme</label>
+            <label className="form-label mb-2">Color Theme</label>
             <div className="grid grid-cols-5 gap-2">
               {COLOR_OPTIONS.map(opt => (
                 <button key={opt.value} type="button" onClick={() => set('color', opt.value)}
@@ -293,13 +281,8 @@ function CategoryModal({ category, onSave, onClose }) {
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose}
-              className="flex-1 py-3 rounded-xl text-sm font-semibold text-gray-500 bg-gray-100 hover:bg-gray-200">
-              Cancel
-            </button>
-            <button type="submit"
-              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold"
-              style={{ background: GOLD, color: GOLD_DARK }}>
+            <button type="button" onClick={onClose} className="flex-1 py-3 rounded-xl text-sm font-semibold btn-ghost">Cancel</button>
+            <button type="submit" className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold btn-gold">
               <Save size={15} /> {isEdit ? 'Save Changes' : 'Add Category'}
             </button>
           </div>
@@ -331,33 +314,33 @@ function Dashboard({ scriptures, categories }) {
           return (
             <motion.div key={card.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.06 }}
-              className="bg-white rounded-2xl p-5 shadow-sm" style={{ border: '1px solid #E4B24B22' }}>
+              className="corner-card rounded-2xl p-5">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
-                style={{ background: card.bg }}>
+                style={{ background: card.bg, border: '1px solid #C88F2D22' }}>
                 <Icon size={20} color={card.color} />
               </div>
-              <p className="text-2xl font-bold tabular-nums" style={{ color: card.color }}>{card.value}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{card.label}</p>
+              <p className="text-2xl font-bold tabular-nums gold-glow">{card.value}</p>
+              <p className="text-xs text-muted mt-0.5">{card.label}</p>
             </motion.div>
           );
         })}
       </div>
 
-      <div className="bg-white rounded-2xl p-5 shadow-sm" style={{ border: '1px solid #E4B24B22' }}>
-        <h3 className="font-bold text-sm text-gray-700 mb-4">Scriptures by Category</h3>
+      <div className="corner-card rounded-2xl p-5">
+        <h3 className="font-bold text-sm gold-glow mb-4">Scriptures by Category</h3>
         <div className="space-y-3">
           {byCategory.map(c => {
             const pct = Math.round((c.count / scriptures.length) * 100);
             return (
               <div key={c.id}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-semibold text-gray-600"
+                  <span className="text-xs font-semibold text-muted"
                     style={{ fontFamily: 'Tiro Telugu, serif' }}>
-                    {c.label} <span className="text-gray-400 font-normal">({c.label_en})</span>
+                    {c.label} <span className="text-muted-light font-normal">({c.label_en})</span>
                   </span>
-                  <span className="text-xs text-gray-400 tabular-nums">{c.count}</span>
+                  <span className="text-xs text-muted tabular-nums">{c.count}</span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 rounded-full overflow-hidden" style={{ background: '#222' }}>
                   <motion.div className={`h-full rounded-full bg-gradient-to-r ${c.color}`}
                     initial={{ width: 0 }} animate={{ width: pct + '%' }}
                     transition={{ duration: 0.5 }} />
@@ -404,19 +387,16 @@ function Scriptures({ scriptures, categories, setScriptures }) {
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
           <input value={search} onChange={e => setSearch(e.target.value)}
-            placeholder="Search scriptures..."
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm outline-none border border-gray-200 focus:border-amber-400 bg-white" />
+            placeholder="Search scriptures..." className="form-input pl-9" />
         </div>
-        <select value={filterCat} onChange={e => setFilterCat(e.target.value)}
-          className="rounded-xl px-3 py-2.5 text-sm outline-none border border-gray-200 focus:border-amber-400 bg-white">
+        <select value={filterCat} onChange={e => setFilterCat(e.target.value)} className="form-select">
           <option value="all">All Categories</option>
           {categories.map(c => <option key={c.id} value={c.id}>{c.label_en}</option>)}
         </select>
         <button onClick={() => setModal('add')}
-          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap"
-          style={{ background: GOLD, color: GOLD_DARK }}>
+          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap btn-gold">
           <Plus size={15} /> Add Scripture
         </button>
         <button onClick={() => setPdfModal(true)}
@@ -426,10 +406,9 @@ function Scriptures({ scriptures, categories, setScriptures }) {
         </button>
       </div>
 
-      {/* Table/Cards */}
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden" style={{ border: '1px solid #E4B24B22' }}>
+      <div className="corner-card rounded-2xl overflow-hidden">
         {filtered.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">
+          <div className="text-center py-16 text-muted">
             <BookOpen size={36} className="mx-auto mb-3 opacity-30" />
             <p className="text-sm">No scriptures found</p>
           </div>
@@ -437,55 +416,57 @@ function Scriptures({ scriptures, categories, setScriptures }) {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr style={{ background: 'hsl(40 43% 96%)' }}>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-10 hidden sm:table-cell">Photo</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Title</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Category</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden sm:table-cell">Deity</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden lg:table-cell">Verses</th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
+                <tr style={{ background: '#1a1a1a', borderBottom: '1px solid #C88F2D22' }}>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wide w-10 hidden sm:table-cell">Photo</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wide">Title</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wide hidden md:table-cell">Category</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wide hidden sm:table-cell">Deity</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wide hidden lg:table-cell">Verses</th>
+                  <th className="text-right px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wide">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody>
                 {filtered.map((s, i) => {
                   const cat = categories.find(c => c.id === s.category);
                   return (
                     <motion.tr key={s.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                       transition={{ delay: i * 0.03 }}
-                      className="hover:bg-amber-50/30 transition-colors">
+                      className="hover:bg-white/5 transition-colors"
+                      style={{ borderTop: '1px solid #C88F2D15' }}>
                       <td className="px-4 py-3 hidden sm:table-cell">
                         <div className="w-9 h-9 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0"
-                          style={{ background: 'hsl(40 43% 93%)', border: '1px solid #E4B24B33' }}>
+                          style={{ background: '#1a1a1a', border: '1px solid #C88F2D33' }}>
                           {s.cover_url
                             ? <img src={s.cover_url} alt="deity" className="w-full h-full object-cover" />
                             : <Image size={15} color="#C88F2D88" />}
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="font-semibold text-gray-800" style={{ fontFamily: 'Tiro Telugu, serif' }}>
+                        <div className="font-semibold gold-glow" style={{ fontFamily: 'Tiro Telugu, serif' }}>
                           {s.title_telugu}
                         </div>
-                        <div className="text-xs text-gray-400">{s.title_english}</div>
+                        <div className="text-xs text-muted">{s.title_english}</div>
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell">
                         {cat && <Badge label={cat.label} color={cat.color} />}
                       </td>
                       <td className="px-4 py-3 hidden sm:table-cell">
-                        <span className="text-xs text-gray-600" style={{ fontFamily: 'Tiro Telugu, serif' }}>
+                        <span className="text-xs text-muted" style={{ fontFamily: 'Tiro Telugu, serif' }}>
                           {s.deity || '—'}
                         </span>
                       </td>
                       <td className="px-4 py-3 hidden lg:table-cell">
-                        <span className="text-xs tabular-nums text-gray-400">{s.verses?.length || 0}</span>
+                        <span className="text-xs tabular-nums text-muted">{s.verses?.length || 0}</span>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-2">
                           <button onClick={() => setModal(s)}
-                            className="p-2 rounded-lg text-amber-600 hover:bg-amber-50 transition-colors">
+                            className="p-2 rounded-lg transition-colors hover:bg-white/5"
+                            style={{ color: GOLD_TEXT }}>
                             <Pencil size={14} />
                           </button>
                           <button onClick={() => setConfirmDelete(s.id)}
-                            className="p-2 rounded-lg text-red-400 hover:bg-red-50 transition-colors">
+                            className="p-2 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
                             <Trash2 size={14} />
                           </button>
                         </div>
@@ -499,7 +480,7 @@ function Scriptures({ scriptures, categories, setScriptures }) {
         )}
       </div>
 
-      <p className="text-xs text-gray-400">{filtered.length} of {scriptures.length} scriptures</p>
+      <p className="text-xs text-muted">{filtered.length} of {scriptures.length} scriptures</p>
 
       {pdfModal && (
         <PDFImportModal
@@ -546,8 +527,7 @@ function Categories({ categories, setCategories, scriptures }) {
     <div className="space-y-4">
       <div className="flex justify-end">
         <button onClick={() => setModal('add')}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold"
-          style={{ background: GOLD, color: GOLD_DARK }}>
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold btn-gold">
           <Plus size={15} /> Add Category
         </button>
       </div>
@@ -558,27 +538,28 @@ function Categories({ categories, setCategories, scriptures }) {
           return (
             <motion.div key={cat.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm" style={{ border: '1px solid #E4B24B22' }}>
+              className="corner-card rounded-2xl overflow-hidden">
               <div className={`h-2 bg-gradient-to-r ${cat.color}`} />
               <div className="p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-gray-800 truncate" style={{ fontFamily: 'Tiro Telugu, serif' }}>
+                    <p className="font-bold truncate gold-glow" style={{ fontFamily: 'Tiro Telugu, serif' }}>
                       {cat.label}
                     </p>
-                    <p className="text-xs text-gray-400 mt-0.5">{cat.label_en || cat.id}</p>
+                    <p className="text-xs text-muted mt-0.5">{cat.label_en || cat.id}</p>
                   </div>
-                  <span className="ml-2 text-sm font-bold tabular-nums text-gray-500 flex-shrink-0">
+                  <span className="ml-2 text-sm font-bold tabular-nums text-muted flex-shrink-0">
                     {count} <span className="text-xs font-normal">items</span>
                   </span>
                 </div>
                 <div className="flex gap-2 mt-4">
                   <button onClick={() => setModal(cat)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors">
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold btn-ghost">
                     <Pencil size={12} /> Edit
                   </button>
                   <button onClick={() => setConfirmDelete(cat.id)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold text-red-500 bg-red-50 hover:bg-red-100 transition-colors">
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold text-red-400 hover:bg-red-500/10 transition-colors"
+                    style={{ border: '1px solid #ef444433' }}>
                     <Trash2 size={12} /> Delete
                   </button>
                 </div>
@@ -617,38 +598,37 @@ export default function AdminPanel({ onLogout }) {
   }
 
   return (
-    <div className="min-h-screen flex" style={{ background: 'hsl(40 43% 95%)' }}>
+    <div className="min-h-screen flex page-bg">
 
-      {/* Sidebar overlay on mobile */}
       <AnimatePresence>
         {sidebarOpen && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+            className="fixed inset-0 bg-black/70 z-40 lg:hidden"
             onClick={() => setSidebarOpen(false)} />
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
       <AnimatePresence>
         {(sidebarOpen || true) && (
           <aside className={`
             fixed top-0 left-0 h-full z-50 flex flex-col w-64 shadow-2xl transition-transform duration-300
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
             lg:translate-x-0 lg:z-30
-          `} style={{ background: GOLD }}>
+          `} style={{ background: '#111', borderRight: '1px solid #C88F2D22' }}>
 
-            <div className="flex items-center gap-3 px-5 py-6 border-b border-white/20">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/25 overflow-hidden flex-shrink-0">
+            <div className="flex items-center gap-3 px-5 py-6" style={{ borderBottom: '1px solid #C88F2D22' }}>
+              <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0"
+                style={{ border: '1px solid #C88F2D44' }}>
                 <img src={logo} alt="logo" className="w-7 h-7 object-contain" />
               </div>
               <div className="min-w-0">
-                <div className="font-bold text-sm truncate" style={{ color: GOLD_DARK, fontFamily: 'Tiro Telugu, serif' }}>
+                <div className="font-bold text-sm truncate gold-glow" style={{ fontFamily: 'Tiro Telugu, serif' }}>
                   వైఖానస నిధి
                 </div>
-                <div className="text-xs" style={{ color: GOLD_DARK + '99' }}>Admin Panel</div>
+                <div className="text-xs text-muted">Admin Panel</div>
               </div>
               <button className="ml-auto lg:hidden p-1" onClick={() => setSidebarOpen(false)}
-                style={{ color: GOLD_DARK }}><X size={18} /></button>
+                style={{ color: GOLD_TEXT }}><X size={18} /></button>
             </div>
 
             <nav className="flex-1 px-3 py-5 space-y-1">
@@ -656,8 +636,9 @@ export default function AdminPanel({ onLogout }) {
                 <button key={id} onClick={() => { setTab(id); setSidebarOpen(false); }}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-left"
                   style={{
-                    background: tab === id ? 'rgba(255,255,255,0.35)' : 'transparent',
-                    color: tab === id ? GOLD_DARK : GOLD_DARK + 'bb',
+                    background: tab === id ? '#C88F2D18' : 'transparent',
+                    color: tab === id ? GOLD_TEXT : '#C88F2D99',
+                    textShadow: tab === id ? '0 0 10px rgba(228,178,75,0.35)' : 'none',
                   }}>
                   <Icon size={17} />
                   {label}
@@ -668,8 +649,7 @@ export default function AdminPanel({ onLogout }) {
 
             <div className="px-3 pb-5">
               <button onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold hover:bg-white/20 transition-all"
-                style={{ color: GOLD_DARK + 'bb' }}>
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold hover:bg-white/5 transition-all text-muted">
                 <LogOut size={17} /> Logout
               </button>
             </div>
@@ -677,30 +657,28 @@ export default function AdminPanel({ onLogout }) {
         )}
       </AnimatePresence>
 
-      {/* Content area */}
       <div className="flex-1 lg:ml-64 flex flex-col min-h-screen">
 
-        {/* Top bar */}
-        <header className="sticky top-0 z-20 flex items-center gap-4 px-4 sm:px-6 h-16 bg-white/80 backdrop-blur shadow-sm"
-          style={{ borderBottom: '1px solid #E4B24B33' }}>
-          <button className="lg:hidden p-2 rounded-xl hover:bg-amber-50" onClick={() => setSidebarOpen(true)}
-            style={{ color: GOLD_DARK }}>
+        <header className="sticky top-0 z-20 flex items-center gap-4 px-4 sm:px-6 h-16 backdrop-blur-md"
+          style={{ background: '#0a0a0aee', borderBottom: '1px solid #C88F2D22' }}>
+          <button className="lg:hidden p-2 rounded-xl hover:bg-white/5" onClick={() => setSidebarOpen(true)}
+            style={{ color: GOLD_TEXT }}>
             <LayoutDashboard size={20} />
           </button>
           <div>
-            <h1 className="font-bold text-base text-gray-800">
+            <h1 className="font-bold text-base gold-glow">
               {TABS.find(t => t.id === tab)?.label}
             </h1>
-            <p className="text-xs text-gray-400 hidden sm:block">Manage your sacred content</p>
+            <p className="text-xs text-muted hidden sm:block">Manage your sacred content</p>
           </div>
           <div className="ml-auto flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold"
-              style={{ background: '#F6D67A33', color: GOLD_DARK }}>
+              style={{ background: '#C88F2D18', color: GOLD_TEXT, border: '1px solid #C88F2D33' }}>
               <span className="w-2 h-2 rounded-full bg-green-400" />
               Admin
             </div>
             <button onClick={handleLogout}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-red-500 hover:bg-red-50 transition-colors">
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-red-400 hover:bg-red-500/10 transition-colors">
               <LogOut size={13} /> Logout
             </button>
           </div>

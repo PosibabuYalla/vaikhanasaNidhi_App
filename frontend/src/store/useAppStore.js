@@ -77,12 +77,13 @@ export function getProgress(scripture_id) {
 
 // Settings
 export function getSettings() {
-  return loadStorage().settings || {
-    darkMode: false,
-    fontSize: 'medium',
-    language: 'telugu',
+  return {
+    themeMode: 'dark',
+    fontSize: 'large',
+    textColor: 'bright',
     notifyDailySloka: true,
     notifyPanchangam: false,
+    ...loadStorage().settings,
   };
 }
 

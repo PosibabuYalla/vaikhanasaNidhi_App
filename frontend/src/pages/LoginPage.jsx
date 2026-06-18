@@ -4,15 +4,6 @@ import { User, Shield, Eye, EyeOff, LogIn, UserPlus, ArrowRight } from 'lucide-r
 import { loginAsUser, loginAsAdmin, signup, continueAsGuest } from '../store/authStore';
 import logo from '../assets/images/logo.png';
 
-const GOLD = 'linear-gradient(135deg, #C88F2D 0%, #E4B24B 45%, #F6D67A 100%)';
-const GOLD_DARK = '#8B6200';
-
-const INPUT = {
-  border: '1.5px solid #E4B24B55',
-  background: 'hsl(40 43% 97%)',
-  color: GOLD_DARK,
-};
-
 function PasswordInput({ value, onChange, placeholder, required }) {
   const [show, setShow] = useState(false);
   return (
@@ -22,13 +13,10 @@ function PasswordInput({ value, onChange, placeholder, required }) {
         value={value} onChange={onChange}
         placeholder={placeholder || '••••••••'}
         required={required}
-        className="w-full rounded-xl px-4 py-3 pr-11 text-sm outline-none"
-        style={INPUT}
-        onFocus={e => e.target.style.borderColor = '#C88F2D'}
-        onBlur={e => e.target.style.borderColor = '#E4B24B55'}
+        className="form-input pr-11"
       />
       <button type="button" onClick={() => setShow(v => !v)}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-white transition-colors">
         {show ? <EyeOff size={16} /> : <Eye size={16} />}
       </button>
     </div>
@@ -38,13 +26,12 @@ function PasswordInput({ value, onChange, placeholder, required }) {
 function Field({ label, children }) {
   return (
     <div>
-      <label className="block text-sm font-semibold mb-1.5" style={{ color: GOLD_DARK }}>{label}</label>
+      <label className="form-label">{label}</label>
       {children}
     </div>
   );
 }
 
-/* ── Sign Up form ── */
 function SignUpForm({ onDone, onSwitch }) {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
@@ -66,42 +53,26 @@ function SignUpForm({ onDone, onSwitch }) {
   return (
     <form onSubmit={handle} className="space-y-4">
       <Field label="Full Name (optional)">
-        <input value={name} onChange={e => setName(e.target.value)}
-          placeholder="భక్తుడు"
-          className="w-full rounded-xl px-4 py-3 text-sm outline-none"
-          style={{ ...INPUT, fontFamily: 'Tiro Telugu, serif' }}
-          onFocus={e => e.target.style.borderColor = '#C88F2D'}
-          onBlur={e => e.target.style.borderColor = '#E4B24B55'} />
+        <input value={name} onChange={e => setName(e.target.value)} placeholder="భక్తుడు"
+          className="form-input" style={{ fontFamily: 'Tiro Telugu, serif' }} />
       </Field>
       <Field label="Username *">
         <input value={username} onChange={e => setUsername(e.target.value)}
-          placeholder="your_username" required
-          className="w-full rounded-xl px-4 py-3 text-sm outline-none"
-          style={INPUT}
-          onFocus={e => e.target.style.borderColor = '#C88F2D'}
-          onBlur={e => e.target.style.borderColor = '#E4B24B55'} />
+          placeholder="your_username" required className="form-input" />
       </Field>
       <Field label="Password *">
-        <PasswordInput value={pass} onChange={e => setPass(e.target.value)}
-          placeholder="Min. 4 characters" required />
+        <PasswordInput value={pass} onChange={e => setPass(e.target.value)} placeholder="Min. 4 characters" required />
       </Field>
       <Field label="Confirm Password *">
-        <PasswordInput value={confirm} onChange={e => setConfirm(e.target.value)}
-          placeholder="Repeat password" required />
+        <PasswordInput value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Repeat password" required />
       </Field>
-
-      {error && <p className="text-red-500 text-xs bg-red-50 rounded-lg px-3 py-2">{error}</p>}
-
-      <button type="submit"
-        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm active:scale-95 transition-all"
-        style={{ background: GOLD, color: GOLD_DARK }}>
+      {error && <p className="form-error">{error}</p>}
+      <button type="submit" className="w-full flex items-center justify-center gap-2 py-3.5 btn-gold text-sm">
         <UserPlus size={16} /> Create Account
       </button>
-
-      <p className="text-center text-xs text-gray-400">
+      <p className="text-center text-xs text-muted">
         Already have an account?{' '}
-        <button type="button" onClick={() => onSwitch('login')}
-          className="font-semibold underline" style={{ color: GOLD_DARK }}>
+        <button type="button" onClick={() => onSwitch('login')} className="font-semibold underline gold-glow">
           Login
         </button>
       </p>
@@ -109,7 +80,6 @@ function SignUpForm({ onDone, onSwitch }) {
   );
 }
 
-/* ── User Login form ── */
 function UserLoginForm({ onDone, onSwitch }) {
   const [username, setUsername] = useState('');
   const [pass, setPass] = useState('');
@@ -128,28 +98,18 @@ function UserLoginForm({ onDone, onSwitch }) {
     <form onSubmit={handle} className="space-y-4">
       <Field label="Username">
         <input value={username} onChange={e => setUsername(e.target.value)}
-          placeholder="your_username" required
-          className="w-full rounded-xl px-4 py-3 text-sm outline-none"
-          style={INPUT}
-          onFocus={e => e.target.style.borderColor = '#C88F2D'}
-          onBlur={e => e.target.style.borderColor = '#E4B24B55'} />
+          placeholder="your_username" required className="form-input" />
       </Field>
       <Field label="Password">
         <PasswordInput value={pass} onChange={e => setPass(e.target.value)} required />
       </Field>
-
-      {error && <p className="text-red-500 text-xs bg-red-50 rounded-lg px-3 py-2">{error}</p>}
-
-      <button type="submit"
-        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm active:scale-95 transition-all"
-        style={{ background: GOLD, color: GOLD_DARK }}>
+      {error && <p className="form-error">{error}</p>}
+      <button type="submit" className="w-full flex items-center justify-center gap-2 py-3.5 btn-gold text-sm">
         <LogIn size={16} /> Login
       </button>
-
-      <p className="text-center text-xs text-gray-400">
+      <p className="text-center text-xs text-muted">
         New here?{' '}
-        <button type="button" onClick={() => onSwitch('signup')}
-          className="font-semibold underline" style={{ color: GOLD_DARK }}>
+        <button type="button" onClick={() => onSwitch('signup')} className="font-semibold underline gold-glow">
           Create an account
         </button>
       </p>
@@ -157,7 +117,6 @@ function UserLoginForm({ onDone, onSwitch }) {
   );
 }
 
-/* ── Admin Login form ── */
 function AdminLoginForm({ onDone }) {
   const [username, setUsername] = useState('');
   const [pass, setPass] = useState('');
@@ -174,33 +133,23 @@ function AdminLoginForm({ onDone }) {
     <form onSubmit={handle} className="space-y-4">
       <Field label="Admin Username">
         <input value={username} onChange={e => setUsername(e.target.value)}
-          placeholder="admin" required
-          className="w-full rounded-xl px-4 py-3 text-sm outline-none"
-          style={INPUT}
-          onFocus={e => e.target.style.borderColor = '#C88F2D'}
-          onBlur={e => e.target.style.borderColor = '#E4B24B55'} />
+          placeholder="admin" required className="form-input" />
       </Field>
       <Field label="Password">
         <PasswordInput value={pass} onChange={e => setPass(e.target.value)} required />
       </Field>
-
-      {error && <p className="text-red-500 text-xs bg-red-50 rounded-lg px-3 py-2">{error}</p>}
-
-      <button type="submit"
-        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm active:scale-95 transition-all"
-        style={{ background: GOLD, color: GOLD_DARK }}>
+      {error && <p className="form-error">{error}</p>}
+      <button type="submit" className="w-full flex items-center justify-center gap-2 py-3.5 btn-gold text-sm">
         <Shield size={16} /> Login as Admin
       </button>
-      <p className="text-center text-xs text-gray-400">
-        Default: <span className="font-mono font-semibold">admin</span> / <span className="font-mono font-semibold">admin@123</span>
+      <p className="text-center text-xs text-muted">
+        Default: <span className="font-mono font-semibold gold-glow">admin</span> / <span className="font-mono font-semibold gold-glow">admin@123</span>
       </p>
     </form>
   );
 }
 
-/* ── Main ── */
 export default function LoginPage({ onLogin }) {
-  // mode: 'signup' | 'login' | 'admin'
   const [mode, setMode] = useState('login');
   const [adminUnlocked, setAdminUnlocked] = useState(false);
   const [tapCount, setTapCount] = useState(0);
@@ -208,11 +157,7 @@ export default function LoginPage({ onLogin }) {
   function handleLogoTap() {
     const next = tapCount + 1;
     setTapCount(next);
-    if (next >= 5) {
-      setAdminUnlocked(true);
-      setMode('admin');
-      setTapCount(0);
-    }
+    if (next >= 5) { setAdminUnlocked(true); setMode('admin'); setTapCount(0); }
   }
 
   const tabs = [
@@ -222,61 +167,49 @@ export default function LoginPage({ onLogin }) {
   ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4"
-      style={{ background: 'hsl(40 43% 95%)', backgroundImage: "url('/bg-pattern.svg')", backgroundRepeat: 'repeat', backgroundSize: '220px' }}>
+    <div className="min-h-screen flex items-center justify-center p-4 page-bg"
+      style={{ backgroundImage: 'var(--hero-glow)' }}>
 
-      <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md">
+      <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
 
-        {/* Logo */}
         <div className="flex flex-col items-center mb-7 gap-3">
-          <button
-            onClick={handleLogoTap}
-            className="w-20 h-20 rounded-full flex items-center justify-center shadow-xl overflow-hidden select-none focus:outline-none active:scale-95 transition-transform"
-            style={{ background: GOLD }}
-            title="">
+          <button onClick={handleLogoTap}
+            className="w-20 h-20 rounded-full flex items-center justify-center overflow-hidden select-none focus:outline-none active:scale-95 transition-transform corner-card"
+            style={{ boxShadow: '0 0 30px rgba(200,143,45,0.3)' }}>
             <img src={logo} alt="logo" className="w-12 h-12 object-contain pointer-events-none" />
           </button>
           <div className="text-center">
-            <h1 className="font-bold text-3xl" style={{ fontFamily: 'Tiro Telugu, serif', color: GOLD_DARK }}>
+            <h1 className="font-bold text-3xl gold-glow-strong" style={{ fontFamily: 'Tiro Telugu, serif' }}>
               వైఖానస నిధి
             </h1>
-            <p className="text-sm text-gray-500 mt-1">Sacred Library</p>
+            <p className="text-sm text-muted mt-1">Sacred Library</p>
             {tapCount > 0 && tapCount < 5 && (
-              <motion.p
-                key={tapCount}
-                initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                className="text-xs mt-1" style={{ color: '#C88F2D99' }}>
-                {'● '.repeat(tapCount).trim()}
-              </motion.p>
+              <motion.p key={tapCount} initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                className="text-xs mt-1 text-muted">{'● '.repeat(tapCount).trim()}</motion.p>
             )}
             {adminUnlocked && (
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                className="text-xs mt-1 font-semibold" style={{ color: '#C88F2D' }}>
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-xs mt-1 font-semibold gold-glow">
                 Admin access unlocked
               </motion.p>
             )}
           </div>
         </div>
 
-        {/* Card */}
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden" style={{ border: '1px solid #E4B24B33' }}>
-
-          {/* Tabs */}
-          <div className="flex" style={{ background: 'hsl(40 43% 95%)' }}>
+        <div className="corner-card rounded-3xl overflow-hidden bg-card" style={{ border: '1px solid var(--border-subtle)' }}>
+          <div className="flex bg-elevated" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
             {tabs.map(({ id, label, icon: Icon }) => (
               <button key={id} onClick={() => setMode(id)}
                 className="flex-1 flex items-center justify-center gap-1.5 py-3.5 text-xs font-semibold transition-all"
                 style={{
-                  background: mode === id ? GOLD : 'transparent',
-                  color: mode === id ? GOLD_DARK : '#9ca3af',
+                  background: mode === id ? 'linear-gradient(135deg, #C88F2D, #E4B24B)' : 'transparent',
+                  color: mode === id ? 'var(--bg-page)' : 'var(--text-muted)',
                 }}>
                 <Icon size={14} /> {label}
               </button>
             ))}
           </div>
 
-          <div className="p-7">
+          <div className="p-7 bg-card">
             <AnimatePresence mode="wait">
               <motion.div key={mode}
                 initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}
@@ -289,10 +222,8 @@ export default function LoginPage({ onLogin }) {
           </div>
         </div>
 
-        {/* Guest access */}
         <button onClick={() => { continueAsGuest(); onLogin('user'); }}
-          className="w-full flex items-center justify-center gap-2 mt-4 py-3.5 rounded-2xl text-sm font-semibold transition-all active:scale-95 bg-white/70 hover:bg-white"
-          style={{ color: GOLD_DARK, border: '1.5px solid #E4B24B44' }}>
+          className="w-full flex items-center justify-center gap-2 mt-4 py-3.5 rounded-2xl text-sm font-semibold btn-ghost active:scale-95">
           <ArrowRight size={15} /> Continue without Login
         </button>
       </motion.div>
