@@ -18,6 +18,7 @@ router.get('/gallery/events', publicGalleryController.listEvents);
 router.get('/gallery/photos', publicGalleryController.listPhotos);
 router.get('/scriptures/recent', publicScriptureController.getRecentScriptures);
 router.get('/scriptures', publicScriptureController.listScriptures);
+router.get('/scriptures/:id/pdf', publicScriptureController.streamScripturePdf);
 router.get('/scriptures/:id', publicScriptureController.getScripture);
 router.get('/subcategories', publicCategoryController.listSubcategories);
 router.get('/panchangam', panchangamController.getPanchangam);

@@ -13,14 +13,16 @@ function extractPublicId(url) {
   return decodeURIComponent(path);
 }
 
-async function deleteByUrl(url) {
+async function deleteByUrl(url, resourceType = 'image') {
   if (!isConfigured) return { skipped: true, reason: 'not_configured' };
 
   const publicId = extractPublicId(url);
   if (!publicId) return { skipped: true, reason: 'not_cloudinary' };
 
+  const type = resourceType === 'raw' || url.includes('/raw/upload/') ? 'raw' : 'image';
+
   try {
-    const result = await cloudinary.uploader.destroy(publicId, { resource_type: 'image' });
+    const result = await cloudinary.uploader.destroy(publicId, { resource_type: type });
     return { publicId, result: result.result };
   } catch (err) {
     console.warn(`[cloudinary] delete failed for ${publicId}:`, err.message);
@@ -42,6 +44,7 @@ async function deleteManyUrls(urls = []) {
 function collectScriptureImageUrls(scripture) {
   const urls = [];
   if (scripture?.cover_url) urls.push(scripture.cover_url);
+  if (scripture?.pdf_url) urls.push(scripture.pdf_url);
   if (Array.isArray(scripture?.images)) {
     scripture.images.forEach((img) => {
       if (img?.url) urls.push(img.url);

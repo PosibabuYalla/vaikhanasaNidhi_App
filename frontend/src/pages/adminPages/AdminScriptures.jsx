@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { BookOpen, Plus, Pencil, Trash2, Search } from 'lucide-react';
+import { BookOpen, Plus, Pencil, Trash2, Search, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import AdminBadge from '../../components/admin/AdminBadge';
 import AdminConfirmDialog from '../../components/admin/AdminConfirmDialog';
 import AdminScriptureForm from '../../components/admin/AdminScriptureForm';
+import PDFImportModal from '../../components/PDFImportModal';
 import AdminPageState from '../../components/admin/AdminPageState';
 import { GOLD_TEXT } from '../../constants/adminConstants';
 import { useSubcategories, useSaveSubcategory, useCategories } from '../../hooks/useCategories';
@@ -55,6 +56,7 @@ export default function AdminScriptures() {
   const [filterParent, setFilterParent] = useState('all');
   const [filterSub, setFilterSub] = useState('all');
   const [modal, setModal] = useState(null);
+  const [pdfModal, setPdfModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
 
   const isLoading = scripturesLoading || subcategoriesLoading || mainCategoriesLoading;
@@ -65,16 +67,22 @@ export default function AdminScriptures() {
 
   const totalVerses = useMemo(
     () => scriptures.reduce((sum, s) => {
+      if (s.reading_layout === 'pdf_pages' || s.reading_layout === 'image_pages') {
+        return sum + (s.page_count || s.images?.length || 0);
+      }
       const imageCount = s.images?.length || 0;
-      if (s.parent_category === 'chitralu' || imageCount) return sum + imageCount;
+      if (s.parent_category === 'chitralu') return sum + imageCount;
       return sum + (s.verses?.length || 0);
     }, 0),
     [scriptures],
   );
 
   function contentCount(s) {
+    if (s.reading_layout === 'pdf_pages' || s.reading_layout === 'image_pages') {
+      return s.page_count || s.images?.length || 0;
+    }
     const imageCount = s.images?.length || 0;
-    if (s.parent_category === 'chitralu' || imageCount) return imageCount;
+    if (s.parent_category === 'chitralu') return imageCount;
     return s.verses?.length || 0;
   }
 
@@ -103,6 +111,7 @@ export default function AdminScriptures() {
     saveMutation.mutate(form, {
       onSuccess: () => {
         setModal(null);
+        setPdfModal(false);
         toast.success(form.id ? 'Scripture updated.' : 'Scripture added.');
       },
       onError: (err) => toast.error(mapAdminError(err)),
@@ -192,6 +201,11 @@ export default function AdminScriptures() {
               <option key={c.id} value={c.key}>{c.label_en || c.label}</option>
             ))}
           </select>
+          <button type="button" onClick={() => setPdfModal(true)} disabled={isMutating}
+            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap btn-ghost disabled:opacity-50"
+            title="Import book verses from PDF (పుస్తకాలు only)">
+            <FileText size={15} /> Import PDF
+          </button>
           <button type="button" onClick={() => setModal('add')} disabled={isMutating}
             className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap btn-gold disabled:opacity-50">
             <Plus size={15} /> Add Scripture
@@ -276,6 +290,16 @@ export default function AdminScriptures() {
           {scriptures.length > 0 ? ` · ${totalVerses} items total` : ''}
         </p>
 
+        {pdfModal && (
+          <PDFImportModal
+            subcategories={allSubs}
+            defaultParentCategory="book"
+            defaultSubcategory={filterSub !== 'all' && filterParent === 'book' ? filterSub : 'scriptures'}
+            onSave={handleSave}
+            onClose={() => setPdfModal(false)}
+            isSaving={saveMutation.isPending}
+          />
+        )}
         {modal && (
           <AdminScriptureForm
             scripture={modal === 'add' ? null : enrichForForm(modal)}

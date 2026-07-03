@@ -3,7 +3,8 @@ const catchAsync = require('../utils/catchAsync');
 const { DEFAULT_CATEGORIES } = require('../data/defaultCategories');
 
 function isImageGalleryScripture(s) {
-  return s.parent_category === 'chitralu' || s.category === 'chitralu' || (s.images?.length > 0);
+  if (s.reading_layout === 'image_pages' || s.reading_layout === 'pdf_pages') return false;
+  return s.parent_category === 'chitralu' || s.category === 'chitralu';
 }
 
 exports.getPublicStats = catchAsync(async (req, res) => {

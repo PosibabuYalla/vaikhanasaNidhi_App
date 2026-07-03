@@ -33,7 +33,10 @@ export default function ScriptureCard({ scripture, onBookmarkChange }) {
   }
 
   return (
-    <div className="gold-card overflow-hidden h-full flex flex-col w-full">
+    <Link
+      to={"/read/" + scripture.id}
+      className="gold-card overflow-hidden h-full flex flex-col w-full hover:brightness-105 transition-all"
+    >
       <div className="flex items-start justify-between relative overflow-hidden p-3" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
         <div className="flex-1 min-w-0 pr-1">
           <span
@@ -49,9 +52,11 @@ export default function ScriptureCard({ scripture, onBookmarkChange }) {
           )}
         </div>
         <button
+          type="button"
           onClick={toggleBookmark}
           className="p-1 rounded-full flex-shrink-0 transition-all hover:bg-white/5"
           style={{ border: "1px solid var(--border-subtle)" }}
+          aria-label={bookmarked ? "Remove bookmark" : "Bookmark"}
         >
           <Bookmark size={12} fill={bookmarked ? GOLD : "none"} color={GOLD} />
         </button>
@@ -64,15 +69,14 @@ export default function ScriptureCard({ scripture, onBookmarkChange }) {
         <p className="line-clamp-1 mb-2 text-scale-xs text-muted">
           {scripture.title_english}
         </p>
-        <Link
-          to={"/read/" + scripture.id}
+        <span
           className="mt-auto flex items-center gap-1 font-semibold text-scale-sm text-primary-gold font-telugu"
           style={{ fontFamily: "Tiro Telugu, serif" }}
         >
           <BookOpen size={12} />
           Read
-        </Link>
+        </span>
       </div>
-    </div>
+    </Link>
   );
 }

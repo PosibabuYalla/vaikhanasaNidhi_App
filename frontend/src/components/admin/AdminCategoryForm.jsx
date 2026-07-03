@@ -1,10 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Save, Loader2, ImagePlus } from 'lucide-react';
-import { toast } from 'sonner';
+import { X, Save, Loader2 } from 'lucide-react';
 import { GOLD_TEXT, COLOR_OPTIONS } from '../../constants/adminConstants';
-import { uploadSubcategoryImage } from '../../api/uploadApi';
-import { mapAdminError } from '../../lib/apiError';
 
 export default function AdminCategoryForm({
   category,
@@ -16,10 +13,6 @@ export default function AdminCategoryForm({
 }) {
   const isEdit = !!category?.id;
   const initialParent = category?.parent_key || defaultParentKey || mainCategories[0]?.key || mainCategories[0]?.id || 'stotra';
-  const fileRef = useRef(null);
-  const [uploading, setUploading] = useState(false);
-  const [imagePreview, setImagePreview] = useState(category?.image_url || null);
-  const [imageFile, setImageFile] = useState(null);
 
   const [form, setForm] = useState(
     category || {
@@ -31,7 +24,6 @@ export default function AdminCategoryForm({
       color: COLOR_OPTIONS[0].value,
       bg: 'bg-rose-700',
       text: 'text-rose-700',
-      image_url: null,
     }
   );
 
@@ -45,35 +37,9 @@ export default function AdminCategoryForm({
     }));
   }
 
-  function handleImagePick(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please choose an image file.');
-      return;
-    }
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
-  }
-
   async function handleSave(e) {
     e.preventDefault();
     if (!form.label.trim() || !form.label_en.trim()) return;
-
-    let imageUrl = form.image_url || null;
-
-    try {
-      if (imageFile) {
-        setUploading(true);
-        const uploaded = await uploadSubcategoryImage(imageFile);
-        imageUrl = uploaded.url;
-      }
-    } catch (err) {
-      toast.error(mapAdminError(err));
-      setUploading(false);
-      return;
-    }
-    setUploading(false);
 
     const payload = {
       isEdit,
@@ -86,13 +52,12 @@ export default function AdminCategoryForm({
       color: form.color,
       bg: form.bg,
       text: form.text,
-      image_url: imageUrl,
     };
     if (isEdit) payload.id = form.id;
     onSave(payload);
   }
 
-  const busy = isSaving || uploading;
+  const busy = isSaving;
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 overflow-y-auto scrollbar-hide p-4">
@@ -122,34 +87,6 @@ export default function AdminCategoryForm({
                 </option>
               ))}
             </select>
-          </div>
-
-          <div>
-            <label className="form-label">Subcategory Image</label>
-            <div className="flex items-center gap-3">
-              <div className="w-16 h-16 rounded-xl overflow-hidden bg-elevated flex items-center justify-center flex-shrink-0"
-                style={{ border: '1px solid var(--border-subtle)' }}>
-                {imagePreview ? (
-                  <img src={imagePreview} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <ImagePlus size={22} className="text-muted" />
-                )}
-              </div>
-              <div className="flex-1">
-                <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleImagePick} />
-                <button type="button" onClick={() => fileRef.current?.click()} disabled={busy}
-                  className="text-xs font-semibold px-3 py-2 rounded-lg btn-ghost disabled:opacity-50">
-                  {imagePreview ? 'Change image' : 'Upload image'}
-                </button>
-                {imagePreview && (
-                  <button type="button" disabled={busy}
-                    onClick={() => { setImageFile(null); setImagePreview(null); set('image_url', null); }}
-                    className="block text-[11px] text-red-400 mt-1 hover:underline disabled:opacity-50">
-                    Remove
-                  </button>
-                )}
-              </div>
-            </div>
           </div>
 
           <div>

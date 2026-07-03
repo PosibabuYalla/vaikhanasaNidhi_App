@@ -6,7 +6,7 @@ const adminCategoryController = require('../controllers/adminCategoryController'
 const adminGalleryController = require('../controllers/adminGalleryController');
 const adminVerificationController = require('../controllers/adminVerificationController');
 const uploadController = require('../controllers/uploadController');
-const { imageUpload } = require('../middleware/upload');
+const { imageUpload, pdfUpload } = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -19,15 +19,15 @@ router.get('/verification/:id', adminVerificationController.getApplication);
 router.patch('/verification/:id', adminVerificationController.reviewApplication);
 
 router.post(
-  '/uploads/subcategory-image',
-  imageUpload.single('image'),
-  uploadController.uploadSubcategoryImage
-);
-
-router.post(
   '/uploads/scripture-images',
   imageUpload.array('images', 30),
   uploadController.uploadScriptureImages
+);
+
+router.post(
+  '/uploads/book-pdf',
+  pdfUpload.single('pdf'),
+  uploadController.uploadBookPdf
 );
 
 router.post(

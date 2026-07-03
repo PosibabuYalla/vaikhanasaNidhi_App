@@ -4,7 +4,6 @@ const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 const { resolveCategoryStyles } = require('../utils/categoryStyles');
 const { FILTER_CATEGORY_SLUGS } = require('../data/defaultCategories');
-const { deleteByUrl } = require('../utils/cloudinaryDelete');
 
 function slugify(text) {
   return text.trim().toLowerCase().replace(/\s+/g, '_');
@@ -97,7 +96,6 @@ exports.createSubcategory = catchAsync(async (req, res) => {
     color,
     bg,
     text,
-    image_url,
     key,
     id,
   } = req.body;
@@ -133,7 +131,6 @@ exports.createSubcategory = catchAsync(async (req, res) => {
     color: color || 'from-stone-600 to-stone-800',
     bg: bg || styles.bg,
     text: text || styles.text,
-    image_url: image_url || null,
   });
 
   res.status(201).json(subcategory.toAdminJSON());
@@ -153,7 +150,6 @@ exports.updateSubcategory = catchAsync(async (req, res) => {
     color,
     bg,
     text,
-    image_url,
   } = req.body;
 
   if (parent_key !== undefined) {
@@ -171,13 +167,6 @@ exports.updateSubcategory = catchAsync(async (req, res) => {
   if (color !== undefined) subcategory.color = color;
   if (bg !== undefined) subcategory.bg = bg;
   if (text !== undefined) subcategory.text = text;
-  if (image_url !== undefined) {
-    const previousUrl = subcategory.image_url;
-    subcategory.image_url = image_url || null;
-    if (previousUrl && previousUrl !== subcategory.image_url) {
-      await deleteByUrl(previousUrl);
-    }
-  }
   if (search_terms !== undefined) {
     subcategory.search_terms = Array.isArray(search_terms)
       ? search_terms.map((item) => String(item).trim()).filter(Boolean)
@@ -191,6 +180,5 @@ exports.updateSubcategory = catchAsync(async (req, res) => {
 exports.deleteSubcategory = catchAsync(async (req, res) => {
   const subcategory = await Subcategory.findOneAndDelete({ slug: req.params.id });
   if (!subcategory) throw new AppError('Subcategory not found', 404, 'NOT_FOUND');
-  if (subcategory.image_url) await deleteByUrl(subcategory.image_url);
   res.json({ ok: true });
 });

@@ -186,14 +186,40 @@ export function resolveScriptureSubForDisplay(scripture, allSubs = []) {
 
 export function isImageGalleryScripture(scripture) {
   if (!scripture) return false;
+  if (scripture.reading_layout === 'image_pages' || scripture.reading_layout === 'pdf_pages') return false;
   return scripture.parent_category === 'chitralu'
-    || scripture.category === 'chitralu'
-    || (scripture.images?.length > 0);
+    || scripture.category === 'chitralu';
+}
+
+/** Book stored as one PDF — pages rendered in browser (low storage) */
+export function isBookPdfScripture(scripture) {
+  if (!scripture) return false;
+  const pdfUrl = scripture.pdf_url?.trim();
+  if (!pdfUrl) return false;
+  if (scripture.reading_layout === 'pdf_pages') return true;
+  if (scripture.reading_layout === 'image_pages') return false;
+  // Saved with pdf_url but layout not set (legacy / partial save)
+  return scripture.parent_category === 'book' || scripture.category === 'book';
+}
+
+/** Book imported as PDF page images — paginated image reader (high storage) */
+export function isBookImageScripture(scripture) {
+  if (!scripture) return false;
+  if (isBookPdfScripture(scripture)) return false;
+  if (scripture.reading_layout === 'image_pages') return true;
+  return scripture.parent_category === 'book'
+    && (scripture.images?.length || 0) >= 5
+    && !(scripture.verses?.length);
+}
+
+export function isBookVisualScripture(scripture) {
+  return isBookPdfScripture(scripture) || isBookImageScripture(scripture);
 }
 
 export function isImageProgressItem(item, scriptureById) {
   if (!item) return false;
   if (item.category === 'chitralu') return true;
   const scripture = scriptureById?.get?.(item.scripture_id);
+  if (scripture?.reading_layout === 'image_pages' || scripture?.reading_layout === 'pdf_pages') return false;
   return isImageGalleryScripture(scripture);
 }

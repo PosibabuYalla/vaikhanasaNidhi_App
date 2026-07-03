@@ -18,7 +18,8 @@ async function countSubcategories() {
 }
 
 function isImageGalleryScripture(s) {
-  return s.parent_category === 'chitralu' || s.category === 'chitralu' || (s.images?.length > 0);
+  if (s.reading_layout === 'image_pages' || s.reading_layout === 'pdf_pages') return false;
+  return s.parent_category === 'chitralu' || s.category === 'chitralu';
 }
 
 function mapRecentUser(user) {

@@ -24,4 +24,15 @@ const documentUpload = multer({
   },
 });
 
-module.exports = { imageUpload, documentUpload };
+const pdfUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 120 * 1024 * 1024 },
+  fileFilter(req, file, cb) {
+    if (file.mimetype !== 'application/pdf') {
+      return cb(new AppError('Only PDF files are allowed', 400, 'BAD_REQUEST'));
+    }
+    return cb(null, true);
+  },
+});
+
+module.exports = { imageUpload, documentUpload, pdfUpload };

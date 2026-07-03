@@ -51,3 +51,24 @@ exports.getScripture = catchAsync(async (req, res) => {
   if (!scripture) throw new AppError('Scripture not found', 404, 'NOT_FOUND');
   res.json(scripture.toAdminJSON());
 });
+
+/** Stream stored PDF through API — avoids browser CORS issues with Cloudinary raw files */
+exports.streamScripturePdf = catchAsync(async (req, res) => {
+  const scripture = await Scripture.findById(req.params.id);
+  if (!scripture) throw new AppError('Scripture not found', 404, 'NOT_FOUND');
+  const pdfUrl = scripture.pdf_url?.trim();
+  if (!pdfUrl) throw new AppError('No PDF linked to this book', 404, 'NOT_FOUND');
+
+  const response = await fetch(pdfUrl);
+  if (!response.ok) {
+    throw new AppError('Could not fetch PDF from storage', 502, 'BAD_GATEWAY');
+  }
+
+  const buffer = Buffer.from(await response.arrayBuffer());
+  res.set({
+    'Content-Type': 'application/pdf',
+    'Content-Length': buffer.length,
+    'Cache-Control': 'private, max-age=3600',
+  });
+  res.send(buffer);
+});

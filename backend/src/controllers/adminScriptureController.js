@@ -31,7 +31,21 @@ function normalizeImages(images) {
   if (!Array.isArray(images)) return [];
   return images
     .filter((img) => img?.url?.trim())
-    .map((img) => ({ url: img.url.trim(), caption: img.caption?.trim() || '' }));
+    .map((img) => ({
+      url: img.url.trim(),
+      caption: img.caption?.trim() || '',
+      page_number: img.page_number ? Number(img.page_number) : undefined,
+    }));
+}
+
+const VALID_READING_LAYOUTS = ['paginated', 'verses', 'image_pages', 'pdf_pages'];
+
+function isBookPdfLayout(body) {
+  return body.reading_layout === 'pdf_pages';
+}
+
+function isBookImageLayout(body) {
+  return body.reading_layout === 'image_pages';
 }
 
 function isImageGalleryCategory(parentKey, category) {
@@ -49,16 +63,49 @@ function resolveContentPayload(body, placement) {
       verses: [],
       images,
       cover_url: body.cover_url || images[0]?.url || null,
+      pdf_url: null,
+    };
+  }
+
+  if (isBookPdfLayout(body)) {
+    const pdfUrl = body.pdf_url?.trim();
+    if (!pdfUrl) {
+      throw new AppError('PDF file URL is required for PDF books', 400, 'BAD_REQUEST');
+    }
+    return {
+      verses: [],
+      images: [],
+      cover_url: body.cover_url || null,
+      pdf_url: pdfUrl,
+    };
+  }
+
+  if (isBookImageLayout(body)) {
+    const images = normalizeImages(body.images);
+    if (!images.length) {
+      throw new AppError('At least one page image is required for image-based books', 400, 'BAD_REQUEST');
+    }
+    return {
+      verses: [],
+      images,
+      cover_url: body.cover_url || images[0]?.url || null,
     };
   }
 
   const verses = Array.isArray(body.verses)
-    ? body.verses.filter((v) => v?.telugu?.trim() || v?.meaning?.trim())
+    ? body.verses
+      .filter((v) => v?.telugu?.trim() || v?.meaning?.trim())
+      .map((v) => ({
+        telugu: v.telugu?.trim() || '',
+        meaning: v.meaning?.trim() || '',
+        page_number: v.page_number ? Number(v.page_number) : undefined,
+      }))
     : [];
   return {
     verses,
     images: [],
     cover_url: body.cover_url || null,
+    pdf_url: null,
   };
 }
 
@@ -115,6 +162,9 @@ exports.createScripture = catchAsync(async (req, res) => {
     popularity,
     verses,
     images,
+    reading_layout,
+    page_count,
+    pdf_url,
   } = req.body;
 
   if (!title_telugu?.trim()) {
@@ -122,7 +172,9 @@ exports.createScripture = catchAsync(async (req, res) => {
   }
 
   const placement = await resolveScripturePlacement({ category, parent_category, subcategory });
-  const content = resolveContentPayload({ verses, images, cover_url }, placement);
+  const content = resolveContentPayload({
+    verses, images, cover_url, reading_layout, pdf_url,
+  }, placement);
 
   const scripture = await Scripture.create({
     title_telugu: title_telugu.trim(),
@@ -131,9 +183,16 @@ exports.createScripture = catchAsync(async (req, res) => {
     deity: deity?.trim() || '',
     description: description || '',
     cover_url: content.cover_url,
+    pdf_url: content.pdf_url || null,
     popularity: popularity ?? 80,
     verses: content.verses,
     images: content.images,
+    reading_layout: VALID_READING_LAYOUTS.includes(reading_layout)
+      ? reading_layout
+      : (content.pdf_url ? 'pdf_pages' : 'verses'),
+    page_count: page_count != null && page_count !== ''
+      ? Number(page_count)
+      : (content.verses.length || 0),
   });
 
   res.status(201).json(scripture.toAdminJSON());
@@ -155,6 +214,9 @@ exports.updateScripture = catchAsync(async (req, res) => {
     popularity,
     verses,
     images,
+    reading_layout,
+    page_count,
+    pdf_url,
   } = req.body;
 
   if (title_telugu !== undefined && !title_telugu.trim()) {
@@ -181,12 +243,15 @@ exports.updateScripture = catchAsync(async (req, res) => {
   const previousUrls = collectScriptureImageUrls(scripture);
 
   if (verses !== undefined || images !== undefined || category !== undefined
-    || parent_category !== undefined || subcategory !== undefined) {
+    || parent_category !== undefined || subcategory !== undefined
+    || reading_layout !== undefined || pdf_url !== undefined) {
     const content = resolveContentPayload(
       {
         verses: verses ?? scripture.verses,
         images: images ?? scripture.images,
         cover_url: cover_url ?? scripture.cover_url,
+        reading_layout: reading_layout ?? scripture.reading_layout,
+        pdf_url: pdf_url ?? scripture.pdf_url,
       },
       {
         parent_category: scripture.parent_category,
@@ -196,6 +261,15 @@ exports.updateScripture = catchAsync(async (req, res) => {
     scripture.verses = content.verses;
     scripture.images = content.images;
     scripture.cover_url = content.cover_url;
+    scripture.pdf_url = content.pdf_url ?? null;
+    if (reading_layout !== undefined) {
+      scripture.reading_layout = VALID_READING_LAYOUTS.includes(reading_layout)
+        ? reading_layout
+        : 'verses';
+    }
+    if (page_count !== undefined) {
+      scripture.page_count = Number(page_count) || content.verses.length;
+    }
   } else if (cover_url !== undefined) {
     scripture.cover_url = cover_url;
   }

@@ -6,14 +6,32 @@ const UPLOAD_OPTIONS = {
   fetch_format: 'auto',
 };
 
-function uploadBuffer(buffer, folder) {
+function uploadBuffer(buffer, folder, options = {}) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder, ...UPLOAD_OPTIONS },
+      { folder, ...UPLOAD_OPTIONS, ...options },
       (err, result) => {
         if (err) return reject(err);
         resolve(result);
       }
+    );
+    stream.end(buffer);
+  });
+}
+
+function uploadRawBuffer(buffer, folder) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder,
+        resource_type: 'raw',
+        use_filename: true,
+        unique_filename: true,
+      },
+      (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      },
     );
     stream.end(buffer);
   });
@@ -39,4 +57,4 @@ async function uploadBuffersParallel(files, folder, concurrency = 8) {
   return results;
 }
 
-module.exports = { uploadBuffer, uploadBuffersParallel };
+module.exports = { uploadBuffer, uploadBuffersParallel, uploadRawBuffer };

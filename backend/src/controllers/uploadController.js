@@ -1,19 +1,7 @@
 const { isConfigured } = require('../config/cloudinary');
-const { uploadBuffer, uploadBuffersParallel } = require('../utils/cloudinaryUpload');
+const { uploadBuffer, uploadBuffersParallel, uploadRawBuffer } = require('../utils/cloudinaryUpload');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
-
-exports.uploadSubcategoryImage = catchAsync(async (req, res) => {
-  if (!isConfigured) {
-    throw new AppError('Image upload is not configured. Set Cloudinary env variables.', 503, 'SERVICE_UNAVAILABLE');
-  }
-  if (!req.file) {
-    throw new AppError('Image file is required', 400, 'BAD_REQUEST');
-  }
-
-  const result = await uploadBuffer(req.file.buffer, 'vaikhanasa-nidhi/subcategories');
-  res.json({ url: result.secure_url });
-});
 
 exports.uploadScriptureImages = catchAsync(async (req, res) => {
   if (!isConfigured) {
@@ -59,4 +47,21 @@ exports.uploadVerificationProof = catchAsync(async (req, res) => {
 
   const result = await uploadBuffer(req.file.buffer, 'vaikhanasa-nidhi/verification');
   res.json({ url: result.secure_url });
+});
+
+exports.uploadBookPdf = catchAsync(async (req, res) => {
+  if (!isConfigured) {
+    throw new AppError('Upload is not configured. Set Cloudinary env variables.', 503, 'SERVICE_UNAVAILABLE');
+  }
+  if (!req.file) {
+    throw new AppError('PDF file is required', 400, 'BAD_REQUEST');
+  }
+
+  const result = await uploadRawBuffer(req.file.buffer, 'vaikhanasa-nidhi/books');
+
+  res.json({
+    url: result.secure_url,
+    bytes: result.bytes,
+    original_name: req.file.originalname,
+  });
 });
